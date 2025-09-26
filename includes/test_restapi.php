@@ -132,7 +132,7 @@ function restapi_try ($test) {
 			break;
 		case 'oauth2':
 
-			if (!isset($cred['cred_validity']) || (isset($cred['cred_validity']) && $cred['cred_validity'] < time())) {
+			if (!isset($cred['cred_validity']) && !isset($cred['token_value']) || (isset($cred['cred_validity']) && $cred['cred_validity'] < time())) {
 				plugin_servcheck_debug('No valid token, generating new request' , $test);
 
 				$cred_data = json_encode(array(
@@ -178,23 +178,26 @@ function restapi_try ($test) {
 				$body = json_decode(substr($response, $header_size), true);
 
 				if (isset($body['token'])) {
-					plugin_servcheck_debug('We got token and expiration, saving', $test);
+					plugin_servcheck_debug('We got token', $test);
+
+					$new_cred = array();
 
 					if (isset($body['expires_in'])) {
-						$cred['cred_validity'] = time() + $body['expires_in'];
+						$new_cred['cred_validity'] = time() + $body['expires_in'];
+						plugin_servcheck_debug('We know expiration, saving token', $test);
 					} else {
-						plugin_servcheck_debug('We got token and don\'t know expiration. We will use it only one time.', $test);
+						plugin_servcheck_debug('We don\'t know expiration. We will use it only one time.', $test);
 					}
 
-					$cred['type'] = 'oauth2';
-					$cred['oauth_client_id'] = $credential['oauth_client_id'];
-					$cred['oauth_client_secret'] = $credential['oauth_client_secret'];
-					$cred['token_value'] = $body['token'];
-					$cred['token_name'] = $credential['token_name'];
-					$cred['data_url'] = $credential['data_url'];
-					$cred['login_url'] = $credential['login_url'];
+					$new_cred['type'] = 'oauth2';
+					$new_cred['oauth_client_id'] = $credential['oauth_client_id'];
+					$new_cred['oauth_client_secret'] = $credential['oauth_client_secret'];
+					$new_cred['token_value'] = $body['token'];
+					$new_cred['token_name'] = $credential['token_name'];
+					$new_cred['data_url'] = $credential['data_url'];
+					$new_cred['login_url'] = $credential['login_url'];
 
-					$enc = servcheck_encrypt_credential($cred);
+					$enc = servcheck_encrypt_credential($new_cred);
 
 					db_execute_prepared ('UPDATE plugin_servcheck_credential
 						SET data = ? WHERE id = ?',
@@ -213,7 +216,7 @@ function restapi_try ($test) {
 			}
 
 			$http_headers = array();
-			$http_headers[] = 'Authorization: ' . $cred['token_name'] . ' ' . $cred['token_value'];
+			$http_headers[] = 'Authorization: ' . $credential['token_name'] . ' ' . $new_cred['token_value'];
 			$options[CURLOPT_HTTPHEADER] = $http_headers;
 			$options[CURLOPT_POST] = false;
 			unset ($options[CURLOPT_POSTFIELDS]);
