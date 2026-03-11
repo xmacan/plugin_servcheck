@@ -467,7 +467,7 @@ $servcheck_test_fields = [
 	'dns_query' => [
 		'method'        => 'textbox',
 		'friendly_name' => __('DNS Name for Query', 'servcheck'),
-		'description'   => __('DNS name for querying. For DOH (DNS over HTTPS) use /resolve?name=example.com or /dns-query?name=example.com&type=A', 'servcheck'),
+		'description'   => __('DNS name for querying. For DOH (DNS over HTTPS) use /resolve?name=example.com or /dns-query?name=example.com&type=A. For plaintext DNS A and AAAA records will be returned', 'servcheck'),
 		'value'         => '|arg1:dns_query|',
 		'max_length'    => '40',
 		'size'          => '30'

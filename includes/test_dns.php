@@ -23,7 +23,7 @@
 */
 
 function dns_try($test) {
-	include_once(__DIR__ . '/../includes/mxlookup.php');
+	include_once(__DIR__ . '/../includes/dnslookup.php');
 
 	// default result
 	$results['result']        = 'error';
@@ -38,18 +38,16 @@ function dns_try($test) {
 
 	servcheck_debug('Querying ' . $test['hostname'] . ' for record ' . $test['dns_query']);
 
-	$a = new mxlookup($test['dns_query'], $test['hostname'], $test['duration_trigger'] > 0 ? ($test['duration_trigger'] + 2) : read_config_option('servcheck_test_max_duration'));
+	$a = new dnslookup($test['dns_query'], $test['hostname'], $test['duration_trigger'] > 0 ? ($test['duration_trigger'] + 2) : read_config_option('servcheck_test_max_duration'));
 
-	if (!cacti_sizeof($a->arrMX)) {
+	if ($a === false) {
 		$results['result']        = 'error';
 		$results['error']         = 'Server did not respond';
 		$results['result_search'] = 'not tested';
 
 		servcheck_debug('Test failed: ' . $results['error']);
 	} else {
-		foreach ($a->arrMX as $m) {
-			$results['data'] .= "$m\n";
-		}
+		$results['data'] .= $a->get_results();
 
 		$results['result'] = 'ok';
 		$results['error']  = 'Some data returned';

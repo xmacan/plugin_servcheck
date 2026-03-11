@@ -35,7 +35,7 @@ HTTP and HTTPS - returns webpage
 SMTP, SMTPS - connect to SMTP server and displays banner and EHLO/HELO or authentication result
 POP3, POP3S - try to server connection and eventually login and display first unread message
 IMAP, IMAPS - try to server connection and eventually  login and display unread messages in inbox
-DNS, DOH - try to resolve A record and return answer
+DNS, DOH - try to resolve A (and AAAA for plaintext dns) record and return answer
 LDAP and LDAPS - do searching in LDAP
 FTP, FTPS, SFTP - try to login and return directory listing
 TFTP - try to download specific file
