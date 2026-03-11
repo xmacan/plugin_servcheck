@@ -12,6 +12,7 @@
 * feature: Add configurable test timeout
 * feature: Add Servcheck graph template
 * issue: Better themes support
+* issue: Better plaintext DNS - return all A and AAAA records
 
 --- 0.3 ---
 
