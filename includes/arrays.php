@@ -281,7 +281,7 @@ $servcheck_ca_fields = [
 		'value'         => '|arg1:name|',
 		'max_length'    => '100',
 		'size'          => '100',
-		'default'       => __('New CA')
+		'default'       => __('New CA', 'servcheck')
 	],
 	'cert'  => [
 		'friendly_name' => __('CA Chain', 'servcheck'),
@@ -305,7 +305,7 @@ $servcheck_proxy_fields = [
 		'value'         => '|arg1:name|',
 		'max_length'    => '40',
 		'size'          => '40',
-		'default'       => __('New Proxy')
+		'default'       => __('New Proxy', 'servcheck')
 	],
 	'hostname' => [
 		'method'        => 'textbox',
